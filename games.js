@@ -75,11 +75,25 @@ class Player {
         if (this.position.x >=platforms[i].position.x &&
             this.position.x + this.width-20<= platforms[i].position.x + platforms[i].width &&
             this.position.y + this.height+this.velocity.y >= platforms[i].position.y &&
-            this.position.y + this.height <= platforms[i].position.y+platforms[i].height) {
+            this.position.y + this.height <= platforms[i].position.y+platforms[i].height&&
+            (this.position.y=platforms[i].position.y-this.height)
+
+            ){
             this.velocity.y = 0;
 
         }
+        if((this.position.x+this.width+this.velocity.x>=platforms[i].position.x)&&
+        (this.position.x<=platforms[i].position.x+platforms[i].width)&&
+        (this.position.y+this.height>=platforms[i].position.y)&&
+        (this.position.y<=platforms[i].position.y+platforms[i].height)
+        ){
+         
+            this.velocity.x=0;
+           // offset=0;
+        }
        platforms[i].position.x+=offset;
+     
+    
     }
         // if ((this.position.x) > platform1.position.x &&
         //     (this.position.x + this.width) <= platform1.position.x + platform1.width &&
@@ -119,7 +133,7 @@ imgMoveL.src="images/spriteRunLeft.png";
 backImage.src = "../images/hills.png";
 platformImage.src = "../images/platform.png";
 platformSmallImage.src = "../images/platformSmallTall.png";
-
+    
 
 
 
@@ -148,7 +162,7 @@ const platform1 = new Platform(0, canvas.height-platformImage.height,platformIma
 platform1.draw();
 platforms.push(platform1);
 
-const platform2 = new Platform(platformImage.width-1, canvas.height-platformImage.height,platformImage.width,platformImage.height,platformImage);
+const platform2 = new Platform(platformImage.width-3, canvas.height-platformImage.height,platformImage.width,platformImage.height,platformImage);
 platform2.draw();
 platforms.push(platform2);
 
@@ -161,6 +175,7 @@ platforms.push(platform3);
 const platform4 = new Platform(600,150 ,platformSmallImage.width,platformSmallImage.height,platformSmallImage);
 platform4.draw();
 platforms.push(platform4);
+
 
 //platforms.push(platform1);
 //platforms.push(platform2);
@@ -199,6 +214,7 @@ addEventListener("keydown", function (e) {
     if (e.key == "ArrowRight") {
         player.velocity.x = 5;
         moveoffset(-5);
+        
     }
     if (e.key == "ArrowLeft") {
         player.velocity.x = -5;
