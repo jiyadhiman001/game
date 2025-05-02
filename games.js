@@ -5,6 +5,8 @@ canvas.height = window.innerHeight;
 canvas.style.backgroundImage = "url('../images/image.png')";
 
 const context = canvas.getContext("2d");
+let state="walk";
+let key="";
 let gravity = 0.5;
 let offset = 0;
 class Platform {
@@ -32,17 +34,20 @@ class Player {
         this.velocity = { x: 0, y: 1 };
         this.width = 30;
         this.height = 30;
-
+this.frames=1;
         //let gravity=1.5;
         //this.draw();
     }
     draw() {
-       /* if(this.velocity.x==0 && this.velocity.y==0){
-            context.drawImage(imgStandR,0,0,174,400,this.x,this.y,this.width,this.height)
+        if(this.velocity.x==0 && this.velocity.y==0){
+            this.width=66;
+            this.height=150;
+            context.drawImage(imgStandR,0,0,177,400,this.position.x,this.position.y,66,150)
         }
         if(this.velocity.x>0 ){
-            context.drawImage(imgMoveR,0,0,340,400,this.x,this.y,this.width,this.height)
+            context.drawImage(imgMoveR,340*this.frames,0,340,400,this.position.x,this.position.y,90,this.height)
         }
+        /*
         if(this.velocity.x<0 ){
             context.drawImage(imgMoveL,0,0,340,400,this.x,this.y,this.width,this.height)
         }
@@ -52,12 +57,17 @@ class Player {
 
 
 
-        context.fillRect(this.position.x+newoffset, this.position.y, this.width, this.height);
+        //context.fillRect(this.position.x+newoffset, this.position.y, this.width, this.height);
 
     }
     //Player movement
     update() {
-        this.height = 30;
+
+        this.frames++;
+        if(this.frames>=24)
+            this.frames=1;
+
+        //this.height = 30;
 
         if ((this.position.y + this.height + this.velocity.y) >= canvas.height) {
             this.velocity.y = 0;
@@ -75,19 +85,29 @@ class Player {
         if (this.position.x >=platforms[i].position.x &&
             this.position.x + this.width-20<= platforms[i].position.x + platforms[i].width &&
             this.position.y + this.height+this.velocity.y >= platforms[i].position.y &&
-            this.position.y + this.height <= platforms[i].position.y+platforms[i].height&&
-            (this.position.y=platforms[i].position.y-this.height)
+            this.position.y + this.height <= platforms[i].position.y+2
+         
 
-            ){
+        ){
             this.velocity.y = 0;
 
         }
         if((this.position.x+this.width+this.velocity.x>=platforms[i].position.x)&&
-        (this.position.x<=platforms[i].position.x+platforms[i].width)&&
-        (this.position.y+this.height>=platforms[i].position.y)&&
-        (this.position.y<=platforms[i].position.y+platforms[i].height)
-        ){
-         
+        (this.position.x+this.velocity.x<=platforms[i].position.x+platforms[i].width)&&
+        (this.position.y>=platforms[i].position.y))
+        {
+          
+          if (key=="Right"){
+            state="haltRight";
+            offset=0;
+            
+           }
+           else if (key=="Left"){
+            state="haltLeft";
+            offset=0;
+            
+           }
+           
             this.velocity.x=0;
            // offset=0;
         }
@@ -125,11 +145,11 @@ const imgMoveL= new Image();
 const backImage = new Image();
 const platformImage= new Image();
 const platformSmallImage= new Image();
-total=6;
-imgStandR.src="images/spriteStandRight.png";
-imgStandL.src="images/spriteStandLeft.png";
-imgMoveR.src="images/spriteRunRight.png";
-imgMoveL.src="images/spriteRunLeft.png";
+total=4;
+imgStandR.src="../images/spriteStandRight.png";
+imgStandL.src="../images/spriteStandLeft.png";
+imgMoveR.src="../images/spriteRunRight.png";
+imgMoveL.src="../images/spriteRunLeft.png";
 backImage.src = "../images/hills.png";
 platformImage.src = "../images/platform.png";
 platformSmallImage.src = "../images/platformSmallTall.png";
@@ -202,7 +222,7 @@ function playerMovementAnimination()
     }
     player.update();
 }
-playerMovementAnimination();
+//playerMovementAnimination();
 //EVENT HANDLING
 addEventListener("keydown", function (e) {
     if (e.key == "ArrowUp") {
@@ -212,13 +232,27 @@ addEventListener("keydown", function (e) {
     }
 
     if (e.key == "ArrowRight") {
+        if(state!="haltRight")
+        {
         player.velocity.x = 5;
         moveoffset(-5);
+        }
+        if(state=="haltLeft")
+            state="";
+        key="Right";
+        
+        
         
     }
     if (e.key == "ArrowLeft") {
+        key="Right";
+        if(state!="haltLeft"){
+       
         player.velocity.x = -5;
         moveoffset(5);
+        }
+        if(state=="haltRight")
+            state="";
     }
 
 })
@@ -226,10 +260,12 @@ addEventListener("keyup", function (e) {
 
     if (e.key == "ArrowRight") {
         player.velocity.x = 0;
+        key="";
         moveoffset(0)
     }
     if (e.key == "ArrowLeft") {
         player.velocity.x = 0;
+        key="";
         moveoffset(0);
     }
 
